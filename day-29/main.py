@@ -5,8 +5,6 @@ import json
 
 # ---------------------------- PASSWORD GENERATOR ------------------------------- #
 
-#Password Generator Project
-
 def gen_pass():
     letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
     numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
@@ -24,7 +22,7 @@ def gen_pass():
     
     password_entry.insert(0, password)
 
-# ---------------------------- SAVE PASSWORD ------------------------------- #
+# ---------------------------- SAVE USER INFO ------------------------------- #
 
 def save_data():
     website = website_entry.get()
@@ -61,25 +59,22 @@ def update_json(new_data):
         email_entry.insert(0, "example@gmail.com")
         password_entry.delete(0, tk.END)
         website_entry.focus()
-    
-    # if website == "" or email == "" or password == "":
-    #     msgbox.showwarning(title="Missing Information", message="Please enter information in all fields.")
-    # else:
-    #     is_ok = msgbox.askokcancel(title=website, message=f"These are the details entered: \nEmail: {email}\nPassword: {password}\n Is it ok to save?")
         
-    #     if is_ok:
-    #         try:
-    #             with open("data.txt", "a") as file:
-    #                 file.write(f"{website} | {email} | {password}\n")
-    #                 website_entry.delete(0, tk.END)
-    #                 email_entry.delete(0, tk.END)
-    #                 email_entry.insert(0, "example@gmail.com")
-    #                 password_entry.delete(0, tk.END)
-    #                 website_entry.focus()
-    #         except Exception as e:
-    #             print(e)
-    
+# ---------------------------- FIND PASSWORD ------------------------------- #
 
+def find_pass():
+    website = website_entry.get()
+    
+    try:
+        with open("data.json") as file:
+            data = json.load(file)
+    except FileNotFoundError:
+        msgbox.showinfo(title="Error", message="No data file found.")
+    else:
+        if website in data:
+            email = data[website]["email"]
+            password = data[website]["password"]
+            msgbox.showinfo(title=website, message=f"Email: {email}\n Password: {password}")
 
 # ---------------------------- UI SETUP ------------------------------- #
 root = tk.Tk()
@@ -101,8 +96,8 @@ password_label = tk.Label(text="Password:")
 password_label.grid(row=3, column=0)
 
 # Entries
-website_entry = tk.Entry(width=35)
-website_entry.grid(row=1, column=1, columnspan=2)
+website_entry = tk.Entry(width=21)
+website_entry.grid(row=1, column=1)
 website_entry.focus()
 email_entry = tk.Entry(width=35)
 email_entry.grid(row=2, column=1, columnspan=2)
@@ -115,6 +110,8 @@ gen_pass_btn = tk.Button(text="Generate Password", command=gen_pass)
 gen_pass_btn.grid(row=3, column=2)
 add_button = tk.Button(text="Add", width=36, command=save_data)
 add_button.grid(row=4, column=1, columnspan=2)
+search_button = tk.Button(text="Search", width=13, command=find_pass)
+search_button.grid(row=1, column=2)
 
 
 root.mainloop()
